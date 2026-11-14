@@ -2,7 +2,7 @@ import type { Lang } from '../i18n';
 import type { KeyboardState, Press } from '../keyboard/sim';
 import type { KeyId } from '../keyboard/layout';
 
-export type Mode = 'normal' | 'grandpa' | 'typos';
+export type Mode = 'normal' | 'grandpa' | 'typos' | 'manicure';
 
 /**
  * `t` is seconds from the start of the video. Pauses are just gaps between events.

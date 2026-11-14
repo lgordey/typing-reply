@@ -33,7 +33,7 @@ describe('generateTimeline', () => {
   });
 
   it('events are sorted by time', () => {
-    for (const mode of ['normal', 'grandpa', 'typos'] as Mode[]) {
+    for (const mode of ['normal', 'grandpa', 'typos', 'manicure'] as Mode[]) {
       const tl = gen({ text: 'ну что, как дела? Всё ок 👍', mode, seed: 7, lang: 'ru' });
       for (let i = 1; i < tl.events.length; i++) {
         expect(tl.events[i]!.t).toBeGreaterThanOrEqual(tl.events[i - 1]!.t);
@@ -43,7 +43,7 @@ describe('generateTimeline', () => {
 
   it('always ends with exactly the input text — in every mode and for any seed', () => {
     const text = 'Привет! Call me at 5:30, ок? Ёлки 😅';
-    for (const mode of ['normal', 'grandpa', 'typos'] as Mode[]) {
+    for (const mode of ['normal', 'grandpa', 'typos', 'manicure'] as Mode[]) {
       for (let seed = 0; seed < 50; seed++) {
         expect(finalText({ text, mode, seed, lang: 'ru' })).toBe(clip(text, mode));
       }
@@ -174,7 +174,7 @@ describe('languages', () => {
       ru: 'Ок, see you в 5:30 €',
     } as const;
     for (const [lang, text] of Object.entries(texts)) {
-      for (const mode of ['normal', 'grandpa', 'typos'] as Mode[]) {
+      for (const mode of ['normal', 'grandpa', 'typos', 'manicure'] as Mode[]) {
         for (let seed = 0; seed < 20; seed++) {
           expect(finalText({ text, mode, seed, lang: lang as keyof typeof texts })).toBe(clip(text, mode));
         }

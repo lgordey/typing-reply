@@ -37,6 +37,8 @@ const PROFILES: Record<Mode, Profile> = {
   normal: { key: [0.09, 0.2], word: [0.05, 0.3], switch: [0.1, 0.25], typo: 0, hover: 0, eraseAll: 0 },
   grandpa: { key: [0.5, 1.1], word: [0.6, 1.6], switch: [0.6, 1.4], typo: 0, hover: 0.6, eraseAll: 0 },
   typos: { key: [0.07, 0.15], word: [0.03, 0.2], switch: [0.08, 0.18], typo: 0.12, hover: 0, eraseAll: 0.3 },
+  // Long nails: a bit slower and careful, but now and then a nail catches the neighbouring key.
+  manicure: { key: [0.12, 0.26], word: [0.08, 0.35], switch: [0.14, 0.3], typo: 0.05, hover: 0, eraseAll: 0 },
 };
 
 const WORD_BREAK = /[\s.,!?;:—-]/;

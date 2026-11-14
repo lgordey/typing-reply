@@ -28,6 +28,8 @@ interface Finger {
   idle: number;
   /** Which way the knuckle bends (±1). */
   bend: number;
+  /** Long manicured nail instead of a short natural one. */
+  longNail?: boolean;
   waypoints: Waypoint[];
 }
 
@@ -35,6 +37,8 @@ const DWELL = 0.06;
 const PRESS_WINDOW = 0.08;
 
 const SKIN = { fill: '#efc3a0', edge: '#c98e6b', nail: '#f9e2d6', nailEdge: '#ddb19c' };
+/** Manicure: glossy raspberry almond nails. */
+const POLISH = { fill: '#d81b60', edge: '#9c0f43', shine: 'rgba(255,255,255,0.55)' };
 
 function createFingers(mode: Timeline['mode']): Finger[] {
   if (mode === 'grandpa') {
@@ -52,12 +56,14 @@ function createFingers(mode: Timeline['mode']): Finger[] {
       },
     ];
   }
+  const manicure = mode === 'manicure';
   const thumb = (side: -1 | 1): Finger => ({
     kind: 'thumb',
     base: { x: SCREEN_W / 2 + side * 200, y: 890 },
     home: { x: SCREEN_W / 2 + side * 125, y: 805 },
-    palm: { x: SCREEN_W / 2 + side * 245, y: 930, rx: 85, ry: 130 },
-    width: 34,
+    palm: { x: SCREEN_W / 2 + side * 245, y: 930, rx: manicure ? 78 : 85, ry: manicure ? 120 : 130 },
+    width: manicure ? 29 : 34,
+    longNail: manicure,
     travel: 0.14,
     idle: 1.2,
     bend: side,
@@ -204,12 +210,46 @@ function drawFinger(ctx: Ctx2D, f: Finger, touch: Pt, press: number, pxPerPt: nu
   const angle = Math.atan2(tip.y - knuckle.y, tip.x - knuckle.x);
   ctx.translate(tip.x, tip.y);
   ctx.rotate(angle);
-  ctx.fillStyle = SKIN.nail;
-  ctx.strokeStyle = SKIN.nailEdge;
-  ctx.lineWidth = 1.2;
+  if (f.longNail) drawLongNail(ctx, w);
+  else {
+    ctx.fillStyle = SKIN.nail;
+    ctx.strokeStyle = SKIN.nailEdge;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.roundRect(-w * 0.42, -w * 0.29, w * 0.58, w * 0.58, w * 0.22);
+    ctx.fill();
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/** Almond-shaped polished nail that sticks out past the fingertip (local coords: +x = towards the tip). */
+function drawLongNail(ctx: Ctx2D, w: number): void {
+  const back = -w * 0.38;
+  const half = w * 0.3;
+  const shoulder = w * 0.42;
+  const point = w * 0.95;
   ctx.beginPath();
-  ctx.roundRect(-w * 0.42, -w * 0.29, w * 0.58, w * 0.58, w * 0.22);
+  ctx.moveTo(back + half, -half);
+  ctx.lineTo(shoulder, -half);
+  ctx.quadraticCurveTo(point * 0.92, -half * 0.75, point, 0);
+  ctx.quadraticCurveTo(point * 0.92, half * 0.75, shoulder, half);
+  ctx.lineTo(back + half, half);
+  ctx.arcTo(back, half, back, 0, half);
+  ctx.arcTo(back, -half, back + half, -half, half);
+  ctx.closePath();
+  ctx.fillStyle = POLISH.fill;
+  ctx.strokeStyle = POLISH.edge;
+  ctx.lineWidth = 1.2;
   ctx.fill();
   ctx.stroke();
-  ctx.restore();
+
+  // Gloss
+  ctx.strokeStyle = POLISH.shine;
+  ctx.lineWidth = w * 0.09;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(back + w * 0.2, -half * 0.45);
+  ctx.lineTo(shoulder + w * 0.12, -half * 0.45);
+  ctx.stroke();
 }

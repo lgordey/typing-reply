@@ -19,6 +19,7 @@ export const UI_STRINGS = {
     modeNormal: 'Normal',
     modeGrandpa: 'Grandpa, one finger',
     modeTypos: 'With typos',
+    modeManicure: 'With a manicure 💅',
     grandpaTooLong:
       'Grandpa is getting on a bit — he can’t poke out more than {n} characters with one finger. Shorten the text or pick another style.',
     render: 'Make the video',
@@ -64,6 +65,7 @@ export const UI_STRINGS = {
     modeNormal: 'Обычно',
     modeGrandpa: 'Дед одним пальцем',
     modeTypos: 'С опечатками',
+    modeManicure: 'С маникюром 💅',
     grandpaTooLong:
       'Дедушка старенький — больше {n} символов одним пальцем не осилит. Сократи текст или выбери другой режим.',
     render: 'Сделать видео',
@@ -109,6 +111,7 @@ export const UI_STRINGS = {
     modeNormal: 'Normal',
     modeGrandpa: 'Abuelo con un dedo',
     modeTypos: 'Con errores',
+    modeManicure: 'Con manicura 💅',
     grandpaTooLong:
       'El abuelo ya no está para estos trotes: con un dedo no pasa de {n} caracteres. Acorta el texto o elige otro estilo.',
     render: 'Crear video',
@@ -158,6 +161,7 @@ export const UI_STRINGS = {
       'Papy, avec un doigt',
     modeTypos:
       'Avec des fautes de frappe',
+    modeManicure: 'Avec une manucure 💅',
     grandpaTooLong:
       'Papy n’est plus tout jeune\u00A0: avec un doigt, il ne peut pas taper plus de {n}\u00A0caractères. Raccourcis le texte ou choisis un autre style.',
     render: 'Créer la vidéo',
