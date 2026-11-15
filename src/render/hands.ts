@@ -1,4 +1,5 @@
 import type { Timeline } from '../timeline';
+import { HOLD_ANCHOR, MOUTH_SCALE, breakAt, breakPose, drawHoldingHand } from './breaks';
 import { SCREEN_W, keyCenter } from './scene';
 import type { Ctx2D, Pt } from './types';
 
@@ -146,10 +147,25 @@ function fingerAt(f: Finger, t: number): { tip: Pt; press: number } {
 
 /** pxPerPt — frame pixels per scene point (shadow sizes are in pixels). */
 export function drawHands(ctx: Ctx2D, tl: Timeline, t: number, pxPerPt: number): void {
-  for (const f of plan(tl)) {
+  const brk = breakAt(tl, t);
+  plan(tl).forEach((f, i) => {
     const { tip, press } = fingerAt(f, t);
-    drawFinger(ctx, f, tip, press, pxPerPt);
-  }
+    // Breaks: the right hand steps away for coffee or a smoke (see breaks.ts).
+    if (!brk || i !== 1) return drawFinger(ctx, f, tip, press, pxPerPt);
+    const pose = breakPose(brk, t);
+    ctx.save();
+    ctx.translate(pose.offset.x, pose.offset.y);
+    if (pose.prop) {
+      const k = 1 + (MOUTH_SCALE - 1) * pose.raise; // closer to the camera
+      ctx.translate(HOLD_ANCHOR.x, HOLD_ANCHOR.y);
+      ctx.scale(k, k);
+      ctx.translate(-HOLD_ANCHOR.x, -HOLD_ANCHOR.y);
+      drawHoldingHand(ctx, pose, t, pxPerPt);
+    } else {
+      drawFinger(ctx, f, tip, 0, pxPerPt);
+    }
+    ctx.restore();
+  });
 }
 
 function drawFinger(ctx: Ctx2D, f: Finger, touch: Pt, press: number, pxPerPt: number): void {

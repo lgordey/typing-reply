@@ -141,7 +141,8 @@ function updateLimit() {
   counterEl.textContent = `${g.length}/${limit}`;
   counterEl.classList.toggle('over', overLimit);
   limitHintEl.hidden = !overLimit;
-  limitHintEl.textContent = overLimit ? ui.grandpaTooLong.replace('{n}', String(limit)) : '';
+  const tooLong = modeEl.value === 'breaks' ? ui.breaksTooLong : ui.grandpaTooLong;
+  limitHintEl.textContent = overLimit ? tooLong.replace('{n}', String(limit)) : '';
   renderBtn.disabled = rendering || overLimit;
 }
 textEl.addEventListener('input', updateLimit);

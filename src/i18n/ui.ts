@@ -20,8 +20,11 @@ export const UI_STRINGS = {
     modeGrandpa: 'Grandpa, one finger',
     modeTypos: 'With typos',
     modeManicure: 'With a manicure 💅',
+    modeBreaks: 'With coffee & smoke breaks ☕',
     grandpaTooLong:
       'Grandpa is getting on a bit — he can’t poke out more than {n} characters with one finger. Shorten the text or pick another style.',
+    breaksTooLong:
+      'With all these coffee and smoke breaks, more than {n} characters won’t fit into a minute. Shorten the text or pick another style.',
     render: 'Make the video',
     renderingTitle: 'Typing your reply…',
     rendering: 'Keep this tab open, it only takes a moment.',
@@ -66,8 +69,11 @@ export const UI_STRINGS = {
     modeGrandpa: 'Дед одним пальцем',
     modeTypos: 'С опечатками',
     modeManicure: 'С маникюром 💅',
+    modeBreaks: 'С перекурами ☕',
     grandpaTooLong:
       'Дедушка старенький — больше {n} символов одним пальцем не осилит. Сократи текст или выбери другой режим.',
+    breaksTooLong:
+      'С такими перекурами больше {n} символов в минуту не влезет. Сократи текст или выбери другой режим.',
     render: 'Сделать видео',
     renderingTitle: 'Печатаем ответ…',
     rendering: 'Не сворачивай вкладку — это недолго.',
@@ -112,8 +118,11 @@ export const UI_STRINGS = {
     modeGrandpa: 'Abuelo con un dedo',
     modeTypos: 'Con errores',
     modeManicure: 'Con manicura 💅',
+    modeBreaks: 'Con pausas para café y cigarro ☕',
     grandpaTooLong:
       'El abuelo ya no está para estos trotes: con un dedo no pasa de {n} caracteres. Acorta el texto o elige otro estilo.',
+    breaksTooLong:
+      'Con tantas pausas para café y cigarro, más de {n} caracteres no caben en un minuto. Acorta el texto o elige otro estilo.',
     render: 'Crear video',
     renderingTitle: 'Escribiendo tu respuesta…',
     rendering: 'No cierres esta pestaña, es solo un momento.',
@@ -162,8 +171,11 @@ export const UI_STRINGS = {
     modeTypos:
       'Avec des fautes de frappe',
     modeManicure: 'Avec une manucure 💅',
+    modeBreaks: 'Avec pauses café-clope ☕',
     grandpaTooLong:
       'Papy n’est plus tout jeune\u00A0: avec un doigt, il ne peut pas taper plus de {n}\u00A0caractères. Raccourcis le texte ou choisis un autre style.',
+    breaksTooLong:
+      'Avec toutes ces pauses café-clope, plus de {n}\u00A0caractères ne tiennent pas en une minute. Raccourcis le texte ou choisis un autre style.',
     render: 'Créer la vidéo',
     renderingTitle: 'On tape ta réponse…',
     rendering: 'Garde cet onglet ouvert, ça ne prend qu’un instant.',

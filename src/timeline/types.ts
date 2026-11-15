@@ -2,7 +2,15 @@ import type { Lang } from '../i18n';
 import type { KeyboardState, Press } from '../keyboard/sim';
 import type { KeyId } from '../keyboard/layout';
 
-export type Mode = 'normal' | 'grandpa' | 'typos' | 'manicure';
+export type Mode = 'normal' | 'grandpa' | 'typos' | 'manicure' | 'breaks';
+
+/** A pause where the right hand leaves the phone: a sip of coffee or a smoke. */
+export interface Break {
+  kind: 'coffee' | 'smoke';
+  /** Start and end of the break, s. Nothing is typed in between. */
+  t0: number;
+  t1: number;
+}
 
 /**
  * `t` is seconds from the start of the video. Pauses are just gaps between events.
@@ -20,6 +28,8 @@ export interface Timeline {
   /** Total video duration, s. */
   duration: number;
   mode: Mode;
+  /** Breaks (only in the `breaks` mode). */
+  breaks: Break[];
   /** UI language of the phone in the video. */
   lang: Lang;
   /** Length of the voice message being answered (drawn in the chat). */

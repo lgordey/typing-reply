@@ -5,7 +5,7 @@ import { renderFrame } from './renderFrame';
 
 // The renderer must work outside the browser (for future server-side rendering).
 describe('renderFrame outside the DOM', () => {
-  for (const mode of ['normal', 'grandpa', 'typos', 'manicure'] as Mode[]) {
+  for (const mode of ['normal', 'grandpa', 'typos', 'manicure', 'breaks'] as Mode[]) {
     it(`renders ${mode} mode frames without errors`, () => {
       const tl = generateTimeline({ text: 'Hi! Привет, в 5:30 ок? 😅', mode, seed: 4, lang: 'en' });
       const canvas = createCanvas(240, 240);

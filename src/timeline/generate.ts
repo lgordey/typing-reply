@@ -3,7 +3,7 @@ import { KeyboardSim, type Press } from '../keyboard/sim';
 import { splitGraphemes } from './graphemes';
 import { createRng, range } from './prng';
 import { MAX_CHARS } from './limits';
-import type { Mode, Timeline, TimelineEvent, TimelineOptions } from './types';
+import type { Break, Mode, Timeline, TimelineEvent, TimelineOptions } from './types';
 
 /** Delay before the first key press, s. */
 export const LEAD_IN = 0.8;
@@ -39,7 +39,29 @@ const PROFILES: Record<Mode, Profile> = {
   typos: { key: [0.07, 0.15], word: [0.03, 0.2], switch: [0.08, 0.18], typo: 0.12, hover: 0, eraseAll: 0.3 },
   // Long nails: a bit slower and careful, but now and then a nail catches the neighbouring key.
   manicure: { key: [0.12, 0.26], word: [0.08, 0.35], switch: [0.14, 0.3], typo: 0.05, hover: 0, eraseAll: 0 },
+  // Types like normal, but keeps stepping away for coffee or a smoke (see planBreaks).
+  breaks: { key: [0.09, 0.2], word: [0.05, 0.3], switch: [0.1, 0.25], typo: 0, hover: 0, eraseAll: 0 },
 };
+
+/** Break length, s: enough to leave, take a sip / a drag and come back. */
+const BREAK_LEN: Record<Break['kind'], Span> = { coffee: [4.6, 5.4], smoke: [5.4, 6.4] };
+
+/**
+ * After how many typed graphemes to take a break: 1 break for short replies, up to 3 for long ones,
+ * spread evenly and snapped to the nearest word boundary (people pause between words).
+ */
+function planBreaks(graphemes: string[]): number[] {
+  const n = graphemes.length;
+  const count = n < 20 ? 1 : n < 70 ? 2 : 3;
+  const spaces = graphemes.flatMap((g, i) => (g === ' ' ? [i + 1] : []));
+  const at = new Set<number>();
+  for (let k = 1; k <= count; k++) {
+    const ideal = Math.round((n * k) / (count + 1));
+    const snapped = spaces.reduce((best, p) => (Math.abs(p - ideal) < Math.abs(best - ideal) ? p : best), Infinity);
+    at.add(Math.abs(snapped - ideal) <= 8 ? snapped : Math.min(n, Math.max(1, ideal)));
+  }
+  return [...at];
+}
 
 const WORD_BREAK = /[\s.,!?;:—-]/;
 
@@ -53,6 +75,18 @@ export function generateTimeline(opts: TimelineOptions): Timeline {
   const pick = <T>(arr: readonly T[]): T => arr[Math.floor(rng() * arr.length)]!;
 
   let t = LEAD_IN;
+  const breaks: Break[] = [];
+  const breakAt = mode === 'breaks' ? planBreaks(graphemes) : [];
+  /** Alternates coffee and smoke, starting with a random one (rng only in this mode: other modes stay as they were). */
+  let nextKind: Break['kind'] = breakAt.length && rng() < 0.5 ? 'coffee' : 'smoke';
+  const takeBreak = () => {
+    t += range(rng, 0.25, 0.5);
+    const t0 = t;
+    t += range(rng, ...BREAK_LEN[nextKind]);
+    breaks.push({ kind: nextKind, t0, t1: t });
+    nextKind = nextKind === 'coffee' ? 'smoke' : 'coffee';
+    t += range(rng, 0.3, 0.5);
+  };
 
   const emit = (p: Press, quick = false) => {
     events.push({ t, type: 'press', ...p });
@@ -96,6 +130,7 @@ export function generateTimeline(opts: TimelineOptions): Timeline {
       emitAll(presses);
       if (!typo) {
         i++;
+        if (breakAt.includes(i) && breaks.length < breakAt.length) takeBreak();
         continue;
       }
       // Type 0–3 more graphemes, notice, erase, retype without typos.
@@ -132,10 +167,14 @@ export function generateTimeline(opts: TimelineOptions): Timeline {
   if (target !== duration) {
     const factor = (target - TAIL) / t;
     for (const e of events) e.t *= factor;
+    for (const b of breaks) {
+      b.t0 *= factor;
+      b.t1 *= factor;
+    }
     duration = target;
   }
 
-  return { events, duration, mode, lang, voiceSeconds };
+  return { events, duration, mode, breaks, lang, voiceSeconds };
 }
 
 /** Replaces the last press with a neighbouring key. Returns true on success. */

@@ -33,7 +33,7 @@ describe('generateTimeline', () => {
   });
 
   it('events are sorted by time', () => {
-    for (const mode of ['normal', 'grandpa', 'typos', 'manicure'] as Mode[]) {
+    for (const mode of ['normal', 'grandpa', 'typos', 'manicure', 'breaks'] as Mode[]) {
       const tl = gen({ text: 'ну что, как дела? Всё ок 👍', mode, seed: 7, lang: 'ru' });
       for (let i = 1; i < tl.events.length; i++) {
         expect(tl.events[i]!.t).toBeGreaterThanOrEqual(tl.events[i - 1]!.t);
@@ -43,11 +43,25 @@ describe('generateTimeline', () => {
 
   it('always ends with exactly the input text — in every mode and for any seed', () => {
     const text = 'Привет! Call me at 5:30, ок? Ёлки 😅';
-    for (const mode of ['normal', 'grandpa', 'typos', 'manicure'] as Mode[]) {
+    for (const mode of ['normal', 'grandpa', 'typos', 'manicure', 'breaks'] as Mode[]) {
       for (let seed = 0; seed < 50; seed++) {
         expect(finalText({ text, mode, seed, lang: 'ru' })).toBe(clip(text, mode));
       }
     }
+  });
+
+  it('breaks mode: at least one break, nothing is typed during a break', () => {
+    for (const text of ['ok', 'Sorry, give me a sec, then I will reply', 'a '.repeat(60)]) {
+      for (let seed = 0; seed < 20; seed++) {
+        const tl = gen({ text, mode: 'breaks', seed });
+        expect(tl.breaks.length).toBeGreaterThanOrEqual(1);
+        for (const b of tl.breaks) {
+          expect(b.t1 - b.t0).toBeGreaterThan(4);
+          expect(tl.events.some((e) => e.t >= b.t0 && e.t <= b.t1)).toBe(false);
+        }
+      }
+    }
+    expect(gen({ text: 'ok', mode: 'normal' }).breaks).toEqual([]);
   });
 
   it('collapses whitespace', () => {
@@ -174,7 +188,7 @@ describe('languages', () => {
       ru: 'Ок, see you в 5:30 €',
     } as const;
     for (const [lang, text] of Object.entries(texts)) {
-      for (const mode of ['normal', 'grandpa', 'typos', 'manicure'] as Mode[]) {
+      for (const mode of ['normal', 'grandpa', 'typos', 'manicure', 'breaks'] as Mode[]) {
         for (let seed = 0; seed < 20; seed++) {
           expect(finalText({ text, mode, seed, lang: lang as keyof typeof texts })).toBe(clip(text, mode));
         }

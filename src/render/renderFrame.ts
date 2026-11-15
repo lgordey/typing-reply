@@ -1,5 +1,6 @@
 import { VIDEO_STRINGS } from '../i18n';
 import { END_CARD, stateAt, type Timeline } from '../timeline';
+import { drawExhale } from './breaks';
 import { drawHands } from './hands';
 import { drawKeyboard, rr } from './keyboard';
 import { FIELD_MIN_H, FIELD_W, FIELD_X, SCREEN_H, SCREEN_W, SEND_R, fieldBottom, sendCenter } from './scene';
@@ -149,6 +150,7 @@ export function renderFrame(ctx: Ctx2D, tl: Timeline, t: number, opts: RenderOpt
   ctx.restore(); // drop the screen clip
 
   drawHands(ctx, tl, t, S);
+  drawExhale(ctx, tl, t, (H - oy) / S);
   ctx.restore();
 
   // Watermark
